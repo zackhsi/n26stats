@@ -1,5 +1,4 @@
 import logging
-from asyncio import ensure_future
 from datetime import datetime, timedelta
 from decimal import Decimal
 
@@ -24,10 +23,10 @@ async def post(request: web.Request) -> web.Response:
         status = 422
     else:
         status = 201
-        sweep_at_future = stats.sweep_at(ts + timedelta(seconds=60))
-        ensure_future(sweep_at_future)
+        stats.sweep_at(ts + timedelta(seconds=60))
     return web.Response(status=status)
 
 
 async def delete(request: web.Request) -> web.Response:
-    return web.json_response({})
+    stats.reset()
+    return web.Response(status=204)

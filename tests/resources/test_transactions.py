@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Dict
 
 import pytest
 from aiohttp.test_utils import TestClient as _TestClient
@@ -37,7 +38,26 @@ async def test_post(
         assert not mock_sweep_at.called
 
 
-async def test_delete(client: _TestClient) -> None:
-    response = await client.delete('/transactions')
+@freeze_time(datetime(year=2018, month=10, day=17, hour=0, minute=2, second=0))
+async def test_delete(
+    client: _TestClient,
+    stats_api_empty: Dict,
+) -> None:
+    await client.post(
+        '/transactions',
+        json={
+            'amount': '12.3343',
+            'timestamp': '2018-10-17T00:02:00.000Z',
+        }
+    )
+    response = await client.get('/statistics')
+    assert response.status == 200
     data = await response.json()
-    assert data == {}
+    assert data != stats_api_empty
+
+    response = await client.delete('/transactions')
+    assert response.status == 204
+    response = await client.get('/statistics')
+    assert response.status == 200
+    data = await response.json()
+    assert data == stats_api_empty

@@ -57,3 +57,14 @@ def stats_empty() -> Dict:
         'min': Decimal(0),
         'sum': Decimal(0),
     }
+
+
+@pytest.fixture
+def stats_api_empty() -> Dict:
+    return {
+        'avg': '0.00',
+        'count': 0,
+        'max': '0.00',
+        'min': '0.00',
+        'sum': '0.00',
+    }

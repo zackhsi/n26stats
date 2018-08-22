@@ -6,8 +6,8 @@ Max and min are stored with heaps.
 Getting statistics is O(1) because we precompute them on statistic entry and
 statistic expiry.
 """
-import asyncio
 import logging
+from asyncio import ensure_future, sleep
 from datetime import datetime, timedelta
 from decimal import Decimal
 from heapq import heapify, heappush
@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 class StatsContainer:
     def __init__(self) -> None:
+        self.sweep_futures: List = []
         self.reset()
 
     def reset(self) -> None:
@@ -28,6 +29,9 @@ class StatsContainer:
         self.sum: Decimal = Decimal('0')
         self.min_heap: List[Tuple[Decimal, datetime]] = []
         self.max_heap: List[Tuple[Decimal, datetime]] = []
+        for sweep_future in self.sweep_futures:
+            sweep_future.cancel()
+        self.sweep_futures = []
 
     def add(self, amount: Decimal, ts: datetime) -> None:
         now = datetime.now()
@@ -116,11 +120,20 @@ def sweep() -> None:
     stats_container().sweep()
 
 
-async def sweep_at(ts: datetime) -> None:
+async def _sweep_at(ts: datetime) -> None:
     now = datetime.now()
     if ts < now:
         raise Exception('Cannot schedule sweep in the past')
 
     delta_seconds = (ts - now).total_seconds()
-    await asyncio.sleep(delta_seconds)
+    await sleep(delta_seconds)
     sweep()
+
+
+async def sweep_at(ts: datetime) -> None:
+    sweep_future = ensure_future(_sweep_at(ts))
+    stats_container().sweep_futures.append(sweep_future)
+
+
+def reset() -> None:
+    stats_container().reset()
