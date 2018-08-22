@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [[ $TRAVIS == "true" ]]; then
+  BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+else
+  BRANCH=$(git rev-parse --abbrev-ref HEAD)
+fi
+IMAGE=zackhsi/n26stats:$BRANCH
+if ! docker inspect "$IMAGE" &> /dev/null; then
+  IMAGE=zackhsi/n26stats:latest
+fi
+exec docker run \
+  --name n26stats \
+  --interactive \
+  --tty \
+  --rm \
+  --env ENVIRONMENT="$ENVIRONMENT" \
+  --mount type=bind,source="$DIR",target=/code/n26stats \
+  --publish 8000:8000 \
+  "$IMAGE" \
+  "$@"

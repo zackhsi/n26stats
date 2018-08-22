@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+gunicorn = "*"
+aiohttp = "*"
+
+[dev-packages]
+"flake8" = "*"
+mypy = "*"
+pytest = "*"
+pytest-aiohttp = "*"
+
+[requires]
+python_version = "3.6"

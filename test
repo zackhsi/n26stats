@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+if [ $# -eq 0 ]; then
+  args=("tests")
+else
+  args=("$@")
+fi
+ENVIRONMENT=testing exec pipenv run python -m pytest \
+  --showlocals \
+  --verbose \
+  "${args[@]}"

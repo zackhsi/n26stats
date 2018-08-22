@@ -1,0 +1,25 @@
+sudo: required
+language: python
+services:
+  - docker
+python:
+  - '3.6'
+env:
+  - ENVIRONMENT=testing
+branches:
+  only:
+    - master
+before_install:
+  - docker pull zackhsi/n26stats:latest
+  - ./build --cache-from zackhsi/n26stats:latest
+script:
+  - ./run pipenv run flake8
+  - ./run pipenv run mypy .
+  - ./run ./test
+after_success:
+  - if [[ "${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}" == "master" ]]; then
+      echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin;
+      docker tag zackhsi/n26stats:master zackhsi/n26stats:latest;
+      docker push zackhsi/n26stats:latest;
+    fi
+

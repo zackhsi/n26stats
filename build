@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+if [[ $TRAVIS == "true" ]]; then
+  BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+else
+  BRANCH=$(git rev-parse --abbrev-ref HEAD)
+fi
+exec docker build \
+  --tag "zackhsi/n26stats:$BRANCH" \
+  "$@" \
+  .
