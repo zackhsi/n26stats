@@ -21,8 +21,6 @@ class StatsContainer:
     def reset(self) -> None:
         self.avg: Decimal = Decimal(0)
         self.count: Decimal = Decimal(0)
-        self.max: Decimal = Decimal(0)
-        self.min: Decimal = Decimal(0)
         self.sum: Decimal = Decimal(0)
         self.min_heap: List[Tuple[Decimal, datetime]] = []
         self.max_heap: List[Tuple[Decimal, datetime]] = []
@@ -50,12 +48,14 @@ class StatsContainer:
         # Average depends on sum and count.
         self.avg = self.sum / self.count
 
-    def get_min(self) -> Decimal:
+    @property
+    def min(self) -> Decimal:
         if not self.min_heap:
             return Decimal(0)
         return self.min_heap[0][0]
 
-    def get_max(self) -> Decimal:
+    @property
+    def max(self) -> Decimal:
         if not self.max_heap:
             return Decimal(0)
         return self.max_heap[0][0] * -1
@@ -80,8 +80,8 @@ class StatsContainer:
         return {
             'avg': self.avg,
             'count': self.count,
-            'max': self.get_max(),
-            'min': self.get_min(),
+            'max': self.max,
+            'min': self.min,
             'sum': self.sum,
         }
 
