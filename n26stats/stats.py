@@ -13,6 +13,7 @@ from decimal import Decimal
 from heapq import heapify, heappush
 from typing import Dict, List, Tuple
 
+from n26stats import money
 from n26stats.exceptions import StatInTheFuture, StatTooOld
 
 logger = logging.getLogger(__name__)
@@ -23,9 +24,8 @@ class StatsContainer:
         self.reset()
 
     def reset(self) -> None:
-        self.avg: Decimal = Decimal(0)
         self.count: int = 0
-        self.sum: Decimal = Decimal(0)
+        self.sum: Decimal = Decimal('0')
         self.min_heap: List[Tuple[Decimal, datetime]] = []
         self.max_heap: List[Tuple[Decimal, datetime]] = []
 
@@ -39,9 +39,6 @@ class StatsContainer:
         self.count = self.count + 1
         self.sum = self.sum + amount
 
-        # Average depends on sum and count.
-        self.avg = self.sum / self.count
-
         # `heappush` assumes a min heap. We negate the amount in order to
         # implement a max heap.
         heappush(self.min_heap, (amount, ts))
@@ -50,14 +47,21 @@ class StatsContainer:
     @property
     def min(self) -> Decimal:
         if not self.min_heap:
-            return Decimal(0)
+            return Decimal('0')
         return self.min_heap[0][0]
 
     @property
     def max(self) -> Decimal:
         if not self.max_heap:
-            return Decimal(0)
+            return Decimal('0')
         return self.max_heap[0][0] * -1
+
+    @property
+    def avg(self) -> Decimal:
+        if self.count:
+            return money.quantize(self.sum / self.count)
+        else:
+            return Decimal('0')
 
     def sweep(self) -> None:
         for heap_name in ['min_heap', 'max_heap']:
@@ -70,11 +74,6 @@ class StatsContainer:
                         # statistics.
                         self.count = self.count - 1
                         self.sum = self.sum - amount
-                        # Average depends on sum and count.
-                        if self.count:
-                            self.avg = self.sum / self.count
-                        else:
-                            self.avg = Decimal(0)
                 else:
                     new_heap.append((amount, ts))
             heapify(new_heap)

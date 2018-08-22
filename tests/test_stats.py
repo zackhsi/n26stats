@@ -3,19 +3,9 @@ from decimal import Decimal
 
 import pytest
 from freezegun import freeze_time
-from pytest_mock import MockFixture
 
-from n26stats import stats
+from n26stats import money, stats
 from n26stats.exceptions import StatInTheFuture, StatTooOld
-
-
-@pytest.fixture(autouse=True)
-def reset_stats_container(mocker: MockFixture) -> None:
-    mocker.patch.object(
-        stats,
-        'stats_container',
-        return_value=stats.StatsContainer()
-    )
 
 
 def test_empty() -> None:
@@ -163,3 +153,9 @@ def test_sweep() -> None:
             'sum': Decimal(3),
         }
         assert stats.get() == expected_stats
+
+
+def test_rounding() -> None:
+    assert Decimal('1') / Decimal('2') == Decimal('0.5')
+    assert money.quantize(Decimal('1.005')) == Decimal('1.00')
+    assert money.quantize(Decimal('1.006')) == money.quantize(Decimal('1.01'))
