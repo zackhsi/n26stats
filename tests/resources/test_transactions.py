@@ -39,6 +39,32 @@ async def test_post(
 
 
 @freeze_time(datetime(year=2018, month=10, day=17, hour=0, minute=2, second=0))
+@pytest.mark.parametrize(
+    'data',
+    [
+        {},
+        {
+            'amount': 'not numbers',
+            'timestamp': '2018-10-17T00:02:00.000Z',
+        },
+        {
+            'amount': '12.3343',
+            'timestamp': 'not a timestamp',
+        },
+    ]
+)
+async def test_post_400(
+    client: _TestClient,
+    data: Dict,
+) -> None:
+    response = await client.post(
+        '/transactions',
+        json=data,
+    )
+    assert response.status == 400
+
+
+@freeze_time(datetime(year=2018, month=10, day=17, hour=0, minute=2, second=0))
 async def test_delete(
     client: _TestClient,
     stats_api_empty: Dict,
