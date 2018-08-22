@@ -11,7 +11,7 @@ from decimal import Decimal
 from heapq import heapify, heappush
 from typing import Dict, List, Tuple
 
-from n26stats.exceptions import StatTooOld
+from n26stats.exceptions import StatInTheFuture, StatTooOld
 
 
 class StatsContainer:
@@ -29,6 +29,8 @@ class StatsContainer:
         now = datetime.now()
         if ts < now - timedelta(minutes=1):
             raise StatTooOld()
+        if ts > now:
+            raise StatInTheFuture
 
         self.count = self.count + 1
         self.sum = self.sum + amount
