@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from aiohttp import web
 
@@ -12,9 +12,20 @@ logger = logging.getLogger(__name__)
 
 async def post(request: web.Request) -> web.Response:
     data = await request.json()
-    amount = Decimal(data['amount'])
-    timestamp = data['timestamp']
-    ts = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%fZ')
+    try:
+        amount = data['amount']
+        timestamp = data['timestamp']
+    except KeyError:
+        return web.Response(status=400)
+    try:
+        amount = Decimal(amount)
+    except InvalidOperation:
+        return web.Response(status=400)
+    try:
+        ts = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%fZ')
+    except ValueError:
+        return web.Response(status=400)
+
     try:
         stats.add(amount, ts)
     except StatTooOld:
