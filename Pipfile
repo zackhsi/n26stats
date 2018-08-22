@@ -12,6 +12,7 @@ aiohttp = "*"
 mypy = "*"
 pytest = "*"
 pytest-aiohttp = "*"
+pytest-mock = "*"
 
 [requires]
 python_version = "3.6"
