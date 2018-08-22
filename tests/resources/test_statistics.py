@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Dict
 
 import pytest
 from aiohttp.test_utils import TestClient as _TestClient
@@ -7,17 +8,14 @@ from aiohttp.test_utils import TestClient as _TestClient
 from n26stats import stats
 
 
-async def test_get_simple(client: _TestClient) -> None:
+async def test_get_simple(
+    client: _TestClient,
+    stats_api_empty: Dict,
+) -> None:
     response = await client.get('/statistics')
     assert response.status == 200
     data = await response.json()
-    assert data == {
-        'avg': '0.00',
-        'count': 0,
-        'max': '0.00',
-        'min': '0.00',
-        'sum': '0.00',
-    }
+    assert data == stats_api_empty
 
     stats.add(
         amount=Decimal(1),

@@ -13,4 +13,5 @@ async def get(request: web.Request) -> web.Response:
     for key, value in current_stats.items():
         if isinstance(value, Decimal):
             current_stats[key] = money.format(value)
+    logger.info('Fetched statistics')
     return web.json_response(current_stats)
