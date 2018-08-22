@@ -6,7 +6,7 @@ from freezegun import freeze_time
 from pytest_mock import MockFixture
 
 from n26stats import stats
-from n26stats.exceptions import StatTooOld
+from n26stats.exceptions import StatInTheFuture, StatTooOld
 
 
 @pytest.fixture(autouse=True)
@@ -67,6 +67,14 @@ def test_stat_too_old() -> None:
         stats.add(
             amount=Decimal(10),
             ts=datetime.now() - timedelta(seconds=60)
+        )
+
+
+def test_stat_in_the_future() -> None:
+    with pytest.raises(StatInTheFuture):
+        stats.add(
+            amount=Decimal(10),
+            ts=datetime.now() + timedelta(seconds=1)
         )
 
 
