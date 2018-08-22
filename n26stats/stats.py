@@ -8,7 +8,7 @@ statistic expiry.
 """
 from datetime import datetime, timedelta
 from decimal import Decimal
-from heapq import heappush
+from heapq import heapify, heappush
 from typing import Dict, List, Tuple
 
 from n26stats.exceptions import StatTooOld
@@ -71,6 +71,7 @@ class StatsContainer:
                             self.avg = Decimal(0)
                 else:
                     new_heap.append((amount, ts))
+            heapify(new_heap)
             setattr(self, heap_name, new_heap)
 
     def is_expired(self, ts: datetime) -> bool:
