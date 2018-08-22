@@ -19,14 +19,18 @@ async def post(request: web.Request) -> web.Response:
         stats.add(amount, ts)
     except StatTooOld:
         status = 204
+        logger.warning('Ignored old stat')
     except StatInTheFuture:
         status = 422
+        logger.warning('Ignored stat in the future')
     else:
         status = 201
-        stats.sweep_at(ts + timedelta(seconds=60))
+        await stats.sweep_at(ts + timedelta(seconds=61))
+        logger.info('Received transaction')
     return web.Response(status=status)
 
 
 async def delete(request: web.Request) -> web.Response:
     stats.reset()
+    logger.info('Deleted all transactions')
     return web.Response(status=204)

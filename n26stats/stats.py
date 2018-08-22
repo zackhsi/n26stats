@@ -23,6 +23,7 @@ class StatsContainer:
     def __init__(self) -> None:
         self.sweep_futures: List = []
         self.reset()
+        logger.info('Initialized stats container')
 
     def reset(self) -> None:
         self.count: int = 0
@@ -32,6 +33,7 @@ class StatsContainer:
         for sweep_future in self.sweep_futures:
             sweep_future.cancel()
         self.sweep_futures = []
+        logger.info('Reset stats container')
 
     def add(self, amount: Decimal, ts: datetime) -> None:
         now = datetime.now()
@@ -47,6 +49,7 @@ class StatsContainer:
         # implement a max heap.
         heappush(self.min_heap, (amount, ts))
         heappush(self.max_heap, (-amount, ts))
+        logger.info(f'Added {amount} at {ts}')
 
     @property
     def min(self) -> Decimal:
@@ -82,6 +85,7 @@ class StatsContainer:
                     new_heap.append((amount, ts))
             heapify(new_heap)
             setattr(self, heap_name, new_heap)
+        logger.info('Swept!')
 
     def is_expired(self, ts: datetime) -> bool:
         now = datetime.now()

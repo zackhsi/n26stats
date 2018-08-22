@@ -11,4 +11,4 @@ def init(app: web.Application) -> None:
     app.router.add_post('/transactions', transactions.post)
     app.router.add_get('/statistics', statistics.get)
     app.router.add_delete('/transactions', transactions.delete)
-    logger.info(f'Initialized routes!')
+    logger.info('Initialized routes')

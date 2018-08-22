@@ -7,6 +7,7 @@ from aiohttp.test_utils import TestClient as _TestClient
 
 from n26stats import stats
 
+
 async def test_get_simple(
     client: _TestClient,
     stats_api_empty: Dict,
