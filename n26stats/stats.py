@@ -24,7 +24,7 @@ class StatsContainer:
 
     def reset(self) -> None:
         self.avg: Decimal = Decimal(0)
-        self.count: Decimal = Decimal(0)
+        self.count: int = 0
         self.sum: Decimal = Decimal(0)
         self.min_heap: List[Tuple[Decimal, datetime]] = []
         self.max_heap: List[Tuple[Decimal, datetime]] = []
