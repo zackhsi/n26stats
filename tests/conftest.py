@@ -7,6 +7,7 @@ from aiohttp.test_utils import TestClient
 from asynctest import CoroutineMock
 from pytest_mock import MockFixture
 
+from n26stats import stats
 from n26stats.server import create_application
 from n26stats.settings import ENVIRONMENT, TESTING
 
@@ -36,6 +37,15 @@ def mock_sweep_at(mocker: MockFixture) -> CoroutineMock:
         new=CoroutineMock(),
     )
     return mock
+
+
+@pytest.fixture(autouse=True)
+def reset_stats_container(mocker: MockFixture) -> None:
+    mocker.patch.object(
+        stats,
+        'stats_container',
+        return_value=stats.StatsContainer()
+    )
 
 
 @pytest.fixture
