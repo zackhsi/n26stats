@@ -1,4 +1,5 @@
-from typing import Callable
+from decimal import Decimal
+from typing import Callable, Dict
 
 import pytest
 from aiohttp import web
@@ -35,3 +36,14 @@ def mock_sweep_at(mocker: MockFixture) -> CoroutineMock:
         new=CoroutineMock(),
     )
     return mock
+
+
+@pytest.fixture
+def stats_empty() -> Dict:
+    return {
+        'avg': Decimal(0),
+        'count': 0,
+        'max': Decimal(0),
+        'min': Decimal(0),
+        'sum': Decimal(0),
+    }
