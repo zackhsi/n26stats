@@ -13,6 +13,7 @@ mypy = "*"
 pytest = "*"
 pytest-aiohttp = "*"
 pytest-mock = "*"
+freezegun = "*"
 
 [requires]
 python_version = "3.6"
