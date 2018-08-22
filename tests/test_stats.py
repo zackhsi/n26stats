@@ -21,7 +21,7 @@ def reset_stats_container(mocker: MockFixture) -> None:
 def test_empty() -> None:
     expected_stats = {
         'avg': Decimal(0),
-        'count': Decimal(0),
+        'count': 0,
         'max': Decimal(0),
         'min': Decimal(0),
         'sum': Decimal(0),
@@ -37,7 +37,7 @@ def test_add() -> None:
     )
     expected_stats = {
         'avg': Decimal(10),
-        'count': Decimal(1),
+        'count': 1,
         'max': Decimal(10),
         'min': Decimal(10),
         'sum': Decimal(10),
@@ -50,7 +50,7 @@ def test_add() -> None:
     )
     expected_stats = {
         'avg': Decimal(2.5),
-        'count': Decimal(2),
+        'count': 2,
         'max': Decimal(10),
         'min': Decimal(-5),
         'sum': Decimal(5),
@@ -97,7 +97,7 @@ def test_sweep() -> None:
         )
         expected_stats = {
             'avg': Decimal(10),
-            'count': Decimal(1),
+            'count': 1,
             'max': Decimal(10),
             'min': Decimal(10),
             'sum': Decimal(10),
@@ -116,7 +116,7 @@ def test_sweep() -> None:
         )
         expected_stats = {
             'avg': Decimal(7.5),
-            'count': Decimal(2),
+            'count': 2,
             'max': Decimal(10),
             'min': Decimal(5),
             'sum': Decimal(15),
@@ -136,7 +136,7 @@ def test_sweep() -> None:
         )
         expected_stats = {
             'avg': Decimal(4),
-            'count': Decimal(3),
+            'count': 3,
             'max': Decimal(10),
             'min': Decimal(-3),
             'sum': Decimal(12),
@@ -157,7 +157,7 @@ def test_sweep() -> None:
         )
         expected_stats = {
             'avg': Decimal(1),
-            'count': Decimal(3),
+            'count': 3,
             'max': Decimal(5),
             'min': Decimal(-3),
             'sum': Decimal(3),
