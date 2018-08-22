@@ -1,5 +1,6 @@
 import logging
-from datetime import datetime
+from asyncio import ensure_future
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from aiohttp import web
@@ -23,6 +24,8 @@ async def post(request: web.Request) -> web.Response:
         status = 422
     else:
         status = 201
+        sweep_at_future = stats.sweep_at(ts + timedelta(seconds=60))
+        ensure_future(sweep_at_future)
     return web.Response(status=status)
 
 

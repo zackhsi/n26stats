@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytest
 from aiohttp.test_utils import TestClient as _TestClient
+from asynctest import CoroutineMock
 from freezegun import freeze_time
 
 
@@ -17,9 +18,11 @@ from freezegun import freeze_time
 )
 async def test_post(
     client: _TestClient,
+    mock_sweep_at: CoroutineMock,
     timestamp: str,
     expected_status: int,
 ) -> None:
+    mock_sweep_at.reset_mock()
     response = await client.post(
         '/transactions',
         json={
@@ -28,6 +31,10 @@ async def test_post(
         }
     )
     assert response.status == expected_status
+    if expected_status == 201:
+        assert mock_sweep_at.called
+    else:
+        assert not mock_sweep_at.called
 
 
 async def test_delete(client: _TestClient) -> None:

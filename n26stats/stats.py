@@ -6,12 +6,16 @@ Max and min are stored with heaps.
 Getting statistics is O(1) because we precompute them on statistic entry and
 statistic expiry.
 """
+import asyncio
+import logging
 from datetime import datetime, timedelta
 from decimal import Decimal
 from heapq import heapify, heappush
 from typing import Dict, List, Tuple
 
 from n26stats.exceptions import StatInTheFuture, StatTooOld
+
+logger = logging.getLogger(__name__)
 
 
 class StatsContainer:
@@ -111,3 +115,13 @@ def add(amount: Decimal, ts: datetime) -> None:
 
 def sweep() -> None:
     stats_container().sweep()
+
+
+async def sweep_at(ts: datetime) -> None:
+    now = datetime.now()
+    if ts < now:
+        raise Exception('Cannot schedule sweep in the past')
+
+    delta_seconds = (ts - now).total_seconds()
+    await asyncio.sleep(delta_seconds)
+    sweep()
